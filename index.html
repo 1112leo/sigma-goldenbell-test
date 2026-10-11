@@ -3048,6 +3048,21 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
 .sigma-v8-hero .sigma-bg-notes .note-b{right:12%;top:85%;color:rgba(255,215,129,.46)!important}
 .sigma-v8-hero .sigma-bg-notes .note-c{right:37%;top:35%;color:rgba(207,223,250,.30)!important}
 .sigma-v8-hero .sigma-bg-notes .note-d{right:32%;top:91%;color:rgba(200,216,240,.28)!important}
+/* A single restrained mathematical inscription; no floating geometric illustration. */
+.sigma-v8-hero .sigma-bg-notes .note-e{
+  top:26%;right:10%;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:clamp(17px,1.85vw,23px)!important;
+  font-weight:400!important;
+  letter-spacing:.015em!important;
+  color:rgba(236,217,181,.49)!important;
+  white-space:nowrap;
+}
+.sigma-v8-hero .sigma-bg-notes .note-e sup{
+  font-size:.60em;
+  position:relative;
+  top:-.05em;
+}
 .sigma-v8-hero .sigma-title-row{
   display:block!important;
   min-height:0!important;
@@ -3100,6 +3115,7 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
   .sigma-v8-hero .sigma-bg-notes .note-b{top:88%;right:6%;color:rgba(255,214,126,.37)!important}
   .sigma-v8-hero .sigma-bg-notes .note-c{top:34%;right:35%}
   .sigma-v8-hero .sigma-bg-notes .note-d{top:93%;right:30%}
+  .sigma-v8-hero .sigma-bg-notes .note-e{top:26%;right:7%;font-size:16px!important;color:rgba(236,217,181,.39)!important}
 }
 @media(max-width:720px){
   .sigma-v8-hero .hero-copy{width:calc(100% - 40px)!important}
@@ -3121,6 +3137,7 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
   .sigma-v8-hero .hero-description{margin-top:11px!important}
   .sigma-v8-hero .hero-actions{margin-top:24px!important}
   .sigma-v8-hero .sigma-bg-notes .note-c,.sigma-v8-hero .sigma-bg-notes .note-d{display:none!important}
+  .sigma-v8-hero .sigma-bg-notes .note-e{top:27%;right:5%;font-size:14px!important;color:rgba(236,217,181,.34)!important}
 }
 @media(max-width:360px){
   .sigma-v8-hero .hero-copy{width:calc(100% - 32px)!important}
@@ -3281,6 +3298,7 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
       <canvas id="sigma-bg-graph" aria-hidden="true"></canvas>
       <div class="sigma-bg-notes" aria-hidden="true">
         <span class="note note-a">f(x)=sin x</span>
+        <span class="note note-e">e<sup>iπ</sup> + 1 = 0</span>
         <span class="note note-b">y=1/4x²-1</span>
         <span class="note note-c">x²+y²=r²</span>
         <span class="note note-d">Δ=b²-4ac</span>
@@ -3477,7 +3495,7 @@ applyRegistrationStatus();
     ctx.moveTo(0,oy);ctx.lineTo(w,oy);
     ctx.moveTo(ox,0);ctx.lineTo(ox,h);ctx.stroke();ctx.setLineDash([]);
 
-    // Calm dotted traces: yellow/purple remain still; blue moves subtly.
+    // All three curves are dotted; each dotted trace flows slowly.
     const flowDots=(f,color,radius,spacing,speed)=>{
       const offset=(((-time*speed)%spacing)+spacing)%spacing;
       ctx.fillStyle=color;
@@ -3487,26 +3505,14 @@ applyRegistrationStatus();
         ctx.beginPath();ctx.arc(px,py,radius,0,Math.PI*2);ctx.fill();
       }
     };
-    flowDots(curveA,'rgba(255,215,127,.68)',1.65,.16,0);
+    flowDots(curveA,'rgba(255,215,127,.68)',1.65,.16,.024);
 
-    // Slowly translate the blue sine wave left; dots glide almost imperceptibly.
-    const blue=x=>curveB(x+time*.06);
-    ctx.save();
-    ctx.strokeStyle='rgba(142,203,255,.46)';
-    ctx.lineWidth=1.3;
-    ctx.shadowColor='rgba(80,156,255,.17)';
-    ctx.shadowBlur=4;
-    ctx.beginPath();
-    for(let x=-10;x<=10;x+=.045){
-      const px=X(x),py=Y(blue(x));
-      if(x===-10)ctx.moveTo(px,py);
-      else ctx.lineTo(px,py);
-    }
-    ctx.stroke();
-    ctx.restore();
-    flowDots(blue,'rgba(184,225,255,.65)',1.5,.28,.014);
+    // The blue dotted sine profile itself travels left as points drift along it.
+    // No solid blue line: retain the original dotted aesthetic.
+    const blue=x=>curveB(x+time*.072);
+    flowDots(blue,'rgba(167,216,255,.71)',1.6,.18,.022);
 
-    flowDots(curveC,'rgba(190,184,255,.40)',1.4,.18,0);
+    flowDots(curveC,'rgba(190,184,255,.40)',1.4,.18,.018);
 
     // Static point and mathematically correct tangent to the quadratic.
     const a=1.1;
