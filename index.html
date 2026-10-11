@@ -3249,6 +3249,25 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
 }
 
 
+
+/* Manual application-capacity switch: no outbound form links when closed. */
+.sigma-v8-hero .button-gold.registration-closed,
+.form-card .registration-link.registration-closed{
+  background:#414c60!important;
+  color:#eef1f6!important;
+  border:1px solid rgba(210,220,238,.24)!important;
+  box-shadow:none!important;
+  opacity:.88!important;
+  transform:none!important;
+  cursor:not-allowed!important;
+  justify-content:center!important;
+}
+.sigma-v8-hero .button-gold.registration-closed:hover,
+.form-card .registration-link.registration-closed:hover{
+  background:#414c60!important;
+  transform:none!important;
+}
+
 </style></head>
 <body>
   
@@ -3321,8 +3340,8 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
               </li>
               <li class="sigma-prize-award sigma-prize-snack">
                 <span class="sigma-prize-rank">4·5위</span>
-                <span class="sigma-prize-kind">간식</span>
-                <strong class="sigma-prize-value">과자박스</strong>
+                <span class="sigma-prize-kind">상품</span>
+                <strong class="sigma-prize-value">과자 박스</strong>
               </li>
             </ul>
           </article>
@@ -3362,6 +3381,33 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
     
   </footer>
 <script>
+// 참가 신청 상태 — 마감 후 true로 바꾸어 배포하세요.
+// 구글 설문지 자체의 응답 접수 중지는 Google Forms에서 별도로 설정해야 합니다.
+const REGISTRATION_CLOSED = false;
+
+function applyRegistrationStatus(){
+  if(!REGISTRATION_CLOSED) return; // 열린 상태에서는 기존 링크와 문구를 그대로 유지
+
+  document.querySelectorAll('.hero-actions .button-gold, .form-card .registration-link').forEach(link=>{
+    const button=document.createElement('button');
+    button.type='button';
+    button.disabled=true;
+    button.className=link.className+' registration-closed';
+    button.textContent='참가 신청 마감';
+    button.setAttribute('aria-label','참가 신청이 마감되었습니다');
+    link.replaceWith(button);
+  });
+  const notice=document.getElementById('form-notice');
+  if(notice)notice.innerHTML='<strong>참가 신청이 마감되었습니다.</strong><br>선착순 모집이 종료되어 추가 신청을 받지 않습니다.';
+  const footnote=document.getElementById('registration-tab-note');
+  if(footnote)footnote.textContent='신청 접수가 종료되었습니다.';
+  const heading=document.querySelector('.form-heading h3');
+  if(heading)heading.textContent='참가 신청 마감';
+  const faq=document.querySelector('.faq-list details:first-child p');
+  if(faq)faq.textContent='모집 정원은 최대 60명이며, 현재 참가 신청이 마감되었습니다.';
+}
+
+applyRegistrationStatus();
 
 (() => {
   const hero=document.querySelector('.sigma-v8-hero');
@@ -3431,17 +3477,37 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
     ctx.moveTo(0,oy);ctx.lineTo(w,oy);
     ctx.moveTo(ox,0);ctx.lineTo(ox,h);ctx.stroke();ctx.setLineDash([]);
 
-    const plot=(f,color,radius)=>{
+    // Along-curve flow: dots continuously travel left without moving the quadratic graphs.
+    const flowDots=(f,color,radius,spacing,speed)=>{
+      const offset=(((-time*speed)%spacing)+spacing)%spacing;
       ctx.fillStyle=color;
-      for(let x=-9;x<=7;x+=.085){
-        const py=Y(f(x)),px=X(x);
+      for(let x=-10+offset;x<=10;x+=spacing){
+        const px=X(x),py=Y(f(x));
         if(px<0||px>w||py<0||py>h)continue;
         ctx.beginPath();ctx.arc(px,py,radius,0,Math.PI*2);ctx.fill();
       }
     };
-    plot(curveA,'rgba(255,215,127,.68)',1.65);
-    plot(curveB,'rgba(144,204,255,.59)',1.55);
-    plot(curveC,'rgba(190,184,255,.35)',1.35);
+    flowDots(curveA,'rgba(255,215,127,.68)',1.65,.16,.13);
+
+    // A traveling wave: the entire blue sine profile moves left while its dots
+    // flow independently along it. This is a real animated line, not just dots.
+    const blue=x=>curveB(x+time*.36);
+    ctx.save();
+    ctx.strokeStyle='rgba(142,203,255,.56)';
+    ctx.lineWidth=1.55;
+    ctx.shadowColor='rgba(80,156,255,.28)';
+    ctx.shadowBlur=6;
+    ctx.beginPath();
+    for(let x=-10;x<=10;x+=.045){
+      const px=X(x),py=Y(blue(x));
+      if(x===-10)ctx.moveTo(px,py);
+      else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+    flowDots(blue,'rgba(184,225,255,.83)',1.65,.28,.39);
+
+    flowDots(curveC,'rgba(190,184,255,.40)',1.4,.18,.16);
 
     // A moving point and mathematically correct tangent to the quadratic.
     const a=.3+1.7*Math.sin(time*.28);
@@ -3461,11 +3527,57 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
     ctx.beginPath();ctx.moveTo(cx,cy);
     ctx.lineTo(cx+r*Math.cos(v),cy+r*Math.sin(v));
     ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(v+1.1),cy+r*Math.sin(v+1.1));ctx.stroke();
+
+    // Floating geometry sketch occupies the former bell's empty corner.
+    const tx=w*(mobile?.79:.75);
+    const ty=h*(mobile?.265:.285)+(reduced.matches?0:Math.sin(time*.35)*2);
+    const size=Math.min(w*(mobile?.095:.074),mobile?43:72);
+    const A={x:tx-size*.94,y:ty+size*.66};
+    const B={x:tx+size*.94,y:ty+size*.66};
+    const C={x:tx+size*.10,y:ty-size*.94};
+    const D={x:C.x,y:A.y};
+    ctx.save();
+    ctx.strokeStyle='rgba(244,215,156,.41)';
+    ctx.lineWidth=1.25;
+    ctx.beginPath();
+    ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();
+    ctx.stroke();
+    ctx.strokeStyle='rgba(191,184,255,.39)';
+    ctx.setLineDash([3,5]);
+    ctx.beginPath();ctx.moveTo(C.x,C.y);ctx.lineTo(D.x,D.y);ctx.stroke();
+    ctx.setLineDash([]);
+    const mark=mobile?5:7;
+    ctx.beginPath();
+    ctx.moveTo(D.x-mark,D.y);ctx.lineTo(D.x-mark,D.y-mark);ctx.lineTo(D.x,D.y-mark);
+    ctx.stroke();
+    const theta=Math.atan2(C.y-A.y,C.x-A.x);
+    ctx.beginPath();
+    ctx.arc(A.x,A.y,size*.23,theta,0);
+    ctx.strokeStyle='rgba(255,221,161,.52)';
+    ctx.stroke();
+    ctx.fillStyle='rgba(224,234,251,.66)';
+    for(const point of [A,B,C]){
+      ctx.beginPath();ctx.arc(point.x,point.y,2.3,0,Math.PI*2);ctx.fill();
+    }
+    ctx.font=(mobile?'10':'12')+'px ui-monospace,SFMono-Regular,Consolas,monospace';
+    ctx.fillStyle='rgba(227,234,250,.67)';
+    ctx.fillText('A',A.x-12,A.y+15);
+    ctx.fillText('B',B.x+5,B.y+14);
+    ctx.fillText('C',C.x-5,C.y-11);
+    ctx.fillStyle='rgba(255,223,162,.72)';
+    ctx.fillText('θ',A.x+size*.32,A.y-8);
+    ctx.fillStyle='rgba(198,192,255,.69)';
+    ctx.fillText('h',D.x+7,(C.y+D.y)*.5);
+    ctx.restore();
     fadeEdges();
   }
   function stop(){if(raf) cancelAnimationFrame(raf);raf=0;}
   function frame(now){if(document.hidden||!visible)return;if(now-last>=40){draw(now/1000);last=now;}raf=requestAnimationFrame(frame);}
-  function start(){stop();resize();draw(1.3);if(!reduced.matches&&visible&&!document.hidden)raf=requestAnimationFrame(frame);}
+  function start(){
+    stop();resize();
+    draw(reduced.matches?0:performance.now()/1000);
+    if(!reduced.matches&&visible&&!document.hidden)raf=requestAnimationFrame(frame);
+  }
   const observer=new IntersectionObserver(entries=>{visible=!!entries[0]?.isIntersecting;if(visible)start();else stop();});
   observer.observe(hero);
   const resizeObserver=new ResizeObserver(start);resizeObserver.observe(hero);
