@@ -3464,7 +3464,7 @@ applyRegistrationStatus();
   function draw(time){
     ctx.clearRect(0,0,w,h);
     const mobile=w<820;
-    const ox=w*(mobile?.73:.70),oy=h*(mobile?.775:.785);
+    const ox=w*(mobile?.73:.70),oy=h*(mobile?.775:.785)-18;
     const s=Math.min(w*(mobile?.105:.077),h*.16);
     const X=x=>ox+x*s,Y=y=>oy-y*s;
     const aura=ctx.createRadialGradient(w*.71,h*.695,0,w*.71,h*.695,Math.max(w,h)*.65);
