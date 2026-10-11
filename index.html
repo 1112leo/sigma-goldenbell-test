@@ -3056,6 +3056,13 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
   min-height:190px!important;
 }
 .sigma-v8-hero .sigma-title-row h1{min-width:0!important}
+/* Gently inset only the left-aligned hero text; keep the bell/grid/CTAs fixed. */
+.sigma-v8-hero .hero-copy > .eyebrow,
+.sigma-v8-hero .hero-copy > .hero-kicker,
+.sigma-v8-hero .sigma-title-row h1,
+.sigma-v8-hero .hero-copy > .hero-description{
+  transform:translateX(12px);
+}
 .sigma-v8-hero .hero-actions{margin-top:27px!important}
 .sigma-v8-hero + .event-strip{
   position:relative;
