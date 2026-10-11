@@ -3525,7 +3525,7 @@ applyRegistrationStatus();
     ctx.fillStyle='rgba(255,245,218,.95)';ctx.beginPath();ctx.arc(px,py,3.4,0,Math.PI*2);ctx.fill();
 
     // Minimal geometry diagram, same visual plane as the graph.
-    const cx=w*(mobile?.63:.58),cy=h*.435,r=mobile?25:32;
+    const cx=w*(mobile?.63:.58)-8,cy=h*.435+8,r=mobile?25:32;
     ctx.strokeStyle='rgba(241,215,151,.25)';ctx.lineWidth=1.15;
     ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
     const v=time*.2;
