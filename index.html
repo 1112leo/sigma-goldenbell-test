@@ -3495,7 +3495,7 @@ applyRegistrationStatus();
     ctx.moveTo(0,oy);ctx.lineTo(w,oy);
     ctx.moveTo(ox,0);ctx.lineTo(ox,h);ctx.stroke();ctx.setLineDash([]);
 
-    // All three curves are dotted; each dotted trace flows slowly.
+    // All three curves remain dotted; visible but restrained drift.
     const flowDots=(f,color,radius,spacing,speed)=>{
       const offset=(((-time*speed)%spacing)+spacing)%spacing;
       ctx.fillStyle=color;
@@ -3505,14 +3505,14 @@ applyRegistrationStatus();
         ctx.beginPath();ctx.arc(px,py,radius,0,Math.PI*2);ctx.fill();
       }
     };
-    flowDots(curveA,'rgba(255,215,127,.68)',1.65,.16,.024);
+    flowDots(curveA,'rgba(255,215,127,.68)',1.65,.16,.085);
 
     // The blue dotted sine profile itself travels left as points drift along it.
     // No solid blue line: retain the original dotted aesthetic.
-    const blue=x=>curveB(x+time*.072);
-    flowDots(blue,'rgba(167,216,255,.71)',1.6,.18,.022);
+    const blue=x=>curveB(x+time*.15);
+    flowDots(blue,'rgba(167,216,255,.71)',1.6,.18,.085);
 
-    flowDots(curveC,'rgba(190,184,255,.40)',1.4,.18,.018);
+    flowDots(curveC,'rgba(190,184,255,.40)',1.4,.18,.07);
 
     // Static point and mathematically correct tangent to the quadratic.
     const a=1.1;
@@ -3525,10 +3525,10 @@ applyRegistrationStatus();
     ctx.fillStyle='rgba(255,245,218,.95)';ctx.beginPath();ctx.arc(px,py,3.4,0,Math.PI*2);ctx.fill();
 
     // Minimal geometry diagram, same visual plane as the graph.
-    const cx=w*(mobile?.57:.54),cy=h*.475,r=mobile?25:32;
+    const cx=w*(mobile?.63:.58),cy=h*.435,r=mobile?25:32;
     ctx.strokeStyle='rgba(241,215,151,.25)';ctx.lineWidth=1.15;
     ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
-    const v=.5;
+    const v=time*.2;
     ctx.beginPath();ctx.moveTo(cx,cy);
     ctx.lineTo(cx+r*Math.cos(v),cy+r*Math.sin(v));
     ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(v+1.1),cy+r*Math.sin(v+1.1));ctx.stroke();
