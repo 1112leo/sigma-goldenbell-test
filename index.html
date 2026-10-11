@@ -3086,20 +3086,17 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
   z-index:3;
   margin-top:-120px!important;
   padding:24px 28px;
-  border:1px solid rgba(232,244,255,.42);
-  border-top-color:rgba(255,255,255,.57);
+  border:1px solid rgba(212,227,249,.22);
+  border-top-color:rgba(238,247,255,.28);
   border-radius:22px;
-  /* Actual translucent glass: a light reflection over the visible math backdrop. */
-  background:
-    linear-gradient(110deg,rgba(189,210,243,.22) 0%,rgba(99,139,200,.14) 48%,rgba(50,86,143,.12) 100%),
-    linear-gradient(180deg,rgba(255,255,255,.045) 0%,rgba(255,255,255,0) 62%)!important;
-  -webkit-backdrop-filter:blur(5px) saturate(135%) brightness(1.08)!important;
-  backdrop-filter:blur(5px) saturate(135%) brightness(1.08)!important;
+  /* Thin dark glass: keep the mathematical dots legible underneath. */
+  background:rgba(11,22,41,.12)!important;
+  -webkit-backdrop-filter:blur(2px) saturate(108%)!important;
+  backdrop-filter:blur(2px) saturate(108%)!important;
   box-shadow:
-    0 16px 42px rgba(3,10,24,.23),
-    inset 0 1px 0 rgba(255,255,255,.23),
-    inset 0 -1px 0 rgba(255,255,255,.055)!important;
-  text-shadow:0 1px 6px rgba(3,8,19,.64);
+    0 11px 30px rgba(3,10,24,.14),
+    inset 0 1px 0 rgba(255,255,255,.065)!important;
+  text-shadow:0 1px 6px rgba(3,8,19,.69);
 }
 .sigma-v8-hero + .event-strip .strip-label{color:#c4cee0}
 .sigma-v8-hero + .event-strip .event-time small{color:#c1cede}
