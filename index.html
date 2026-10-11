@@ -3057,11 +3057,12 @@ h1,h2,h3,.logo,.event-date time,.event-time p,.event-invite strong,.form-heading
   padding:24px 28px;
   border:1px solid rgba(235,243,255,.19);
   border-radius:22px;
-  /* Reveal the math artwork directly through the schedule card. */
-  background:transparent!important;
+  /* Light tint preserves legibility without hiding or blurring the math artwork. */
+  background:rgba(11,23,45,.24)!important;
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
   box-shadow:none!important;
+  text-shadow:0 1px 5px rgba(4,10,23,.48);
 }
 .sigma-v8-hero + .event-strip .strip-label{color:#c4cee0}
 .sigma-v8-hero + .event-strip .event-time small{color:#c1cede}
